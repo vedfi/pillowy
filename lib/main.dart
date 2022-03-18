@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:pillowy/helpers/dateStringHelper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -52,30 +53,63 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  DateTime _dateTime = DateTime.now();
-  DateTime _defaultTime = new DateTime(DateTime.now().year,
-      DateTime.now().month, DateTime.now().day, 7, 0, 0, 0, 0);
+  late DateTime _dateTime = DateHelper(7,0);
   late List<DateTime> dates = _calculateTimes();
   PageController _pageController = PageController();
   int currentPage = 0;
 
   void _pickDate(DateTime dateTime) {
     setState(() {
-      _dateTime = dateTime;
+      _dateTime = DateHelper(dateTime.hour, dateTime.minute);
+      setLastConfig();
       dates = _calculateTimes();
+      _pageController.jumpToPage(0);
+      currentPage = 0;
     });
+  }
+
+  Future<void> getLastConfig() async{
+    var sharedPreferences = await SharedPreferences.getInstance();
+    int hour = sharedPreferences.getInt('hour') ?? 7;
+    int minute = sharedPreferences.getInt('minute') ?? 0;
+    if(hour != 7 || minute != 0){
+      _pickDate(DateHelper(hour, minute));
+    }
+  }
+  
+  DateTime DateHelper(int hour, int minute){
+    DateTime now = DateTime.now();
+    if(hour < now.hour || (hour == now.hour && minute < now.minute)){
+      return new DateTime(now.year, now.month, now.day, hour, minute).add(new Duration(days: 1));
+    }
+    return new DateTime(now.year, now.month, now.day, hour, minute);
+  }
+
+  Future<void> setLastConfig() async {
+    var sharedPreferences = await SharedPreferences.getInstance();
+    if(_dateTime.hour != 7 || _dateTime.minute != 0){
+      sharedPreferences.setInt("hour", _dateTime.hour);
+      sharedPreferences.setInt("minute", _dateTime.minute);
+    }
   }
 
   List<DateTime> _calculateTimes() {
     List<DateTime> times = <DateTime>[];
-    for (int i = 6; i > 0; i--) {
-      times.add(_dateTime.subtract(new Duration(minutes: (90 * (i + 1)) + 15)));
+    for (int i = 8; i > 0; i--) {
+      DateTime goal = _dateTime.subtract(new Duration(minutes: (90 * i) + 15));
+      if(!goal.difference(DateTime.now()).isNegative){
+        times.add(goal);
+      }
+    }
+    if(times.isEmpty){
+      times.add(DateTime.now());
     }
     return times;
   }
 
   @override
   void initState() {
+    getLastConfig();
     super.initState();
     _pageController.addListener(() {
       setState(() {
@@ -132,8 +166,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   Expanded(
                       flex: 8,
-                      child: TimePickerSpinner(
-                          time: _defaultTime,
+                      child: TimePickerSpinner(key: ValueKey(_dateTime.hour+_dateTime.minute),
+                          time: _dateTime,
                           is24HourMode: true,
                           isForce2Digits: true,
                           itemHeight: 75,
@@ -181,7 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           );
                         },
-                        itemCount: 6,
+                        itemCount: dates.length,
                       )),
                   Container(
                     margin: EdgeInsets.only(top: 5),
@@ -190,8 +224,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: dates
                           .map((e) => Container(
                                 margin: EdgeInsets.symmetric(horizontal: 2),
-                                width: 11,
-                                height: 11,
+                                width: dates.indexOf(e) == currentPage ? 11 : 8,
+                                height: dates.indexOf(e) == currentPage ? 11 : 8,
                                 decoration: BoxDecoration(
                                     boxShadow: (dates.indexOf(e) == currentPage)
                                         ? [

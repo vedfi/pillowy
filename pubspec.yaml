@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_svg: ^1.0.3
   flutter_time_picker_spinner: ^2.0.0
+  shared_preferences: ^2.0.13
 
 dev_dependencies:
   flutter_test:
