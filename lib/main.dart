@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -19,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Pillowy',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -54,7 +52,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   DateTime _dateTime = DateTime.now();
   DateTime _defaultTime = new DateTime(DateTime.now().year,
       DateTime.now().month, DateTime.now().day, 7, 0, 0, 0, 0);
@@ -71,26 +68,14 @@ class _MyHomePageState extends State<MyHomePage> {
     List<DateTime> times = <DateTime>[];
     for (int i = 6; i > 0; i--) {
       times.add(_dateTime.subtract(new Duration(minutes: (90 * (i + 1)) + 15)));
-      log('Adding time: ${times[(6 - i)]}');
+      //log('Adding time: ${times[(6 - i)]}');
     }
     return times;
   }
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
+    // This method is rerun every time setState is called.
     //
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
@@ -104,86 +89,94 @@ class _MyHomePageState extends State<MyHomePage> {
           allowDrawingOutsideViewBox: true,
         ),
         Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Center(
-            // Center is a layout widget. It takes a single child and positions it
-            // in the middle of the parent.
-            child: Column(
-              // Column is also a layout widget. It takes a list of children and
-              // arranges them vertically. By default, it sizes itself to fit its
-              // children horizontally, and tries to be as tall as its parent.
-              //
-              // Invoke "debug painting" (press "p" in the console, choose the
-              // "Toggle Debug Paint" action from the Flutter Inspector in Android
-              // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-              // to see the wireframe for each widget.
-              //
-              // Column has various properties to control how it sizes itself and
-              // how it positions its children. Here we use mainAxisAlignment to
-              // center the children vertically; the main axis here is the vertical
-              // axis because Columns are vertical (the cross axis would be
-              // horizontal).
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Spacer(flex: 4),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Choose the time you want to wake up.', style: TextStyle(color: Color.fromRGBO(255, 211, 77, 1)))
-                  ],
-                ),
-
-                Expanded(
-                    flex: 8,
-                    child: TimePickerSpinner(
-                        time: _defaultTime,
-                        is24HourMode: true,
-                        isForce2Digits: true,
-                        itemHeight: 75,
-                        minutesInterval: 5,
-                        spacing: 36,
-                        normalTextStyle: TextStyle(
-                            fontSize: 36,
-                            color: Color.fromRGBO(255, 211, 77, 0.2)),
-                        highlightedTextStyle: TextStyle(
-                            fontSize: 36,
-                            color: Color.fromRGBO(255, 211, 77, 1)),
-                        onTimeChange: (dateTime) => _pickDate(dateTime))),
-                Container(
-                  padding: EdgeInsets.only(bottom: 10),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+            backgroundColor: Colors.transparent,
+            body: Center(
+              // Center is a layout widget. It takes a single child and positions it
+              // in the middle of the parent.
+              child: Column(
+                // Column is also a layout widget. It takes a list of children and
+                // arranges them vertically. By default, it sizes itself to fit its
+                // children horizontally, and tries to be as tall as its parent.
+                //
+                // Invoke "debug painting" (press "p" in the console, choose the
+                // "Toggle Debug Paint" action from the Flutter Inspector in Android
+                // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+                // to see the wireframe for each widget.
+                //
+                // Column has various properties to control how it sizes itself and
+                // how it positions its children. Here we use mainAxisAlignment to
+                // center the children vertically; the main axis here is the vertical
+                // axis because Columns are vertical (the cross axis would be
+                // horizontal).
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Spacer(flex: 4),
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.nights_stay_outlined,
-                        color: Color.fromRGBO(255, 211, 77, 1),
-                        size: 28,
-                      ),
-                      Text('Suggested times to go to bed.', style: TextStyle(color: Color.fromRGBO(255, 211, 77, 1))),
+                      Text('Choose the time you want to wake up.',
+                          style:
+                              TextStyle(color: Color.fromRGBO(255, 211, 77, 1)))
                     ],
                   ),
-                ),
-                Expanded(
+                  Expanded(
+                      flex: 8,
+                      child: TimePickerSpinner(
+                          time: _defaultTime,
+                          is24HourMode: true,
+                          isForce2Digits: true,
+                          itemHeight: 75,
+                          minutesInterval: 5,
+                          spacing: 36,
+                          normalTextStyle: TextStyle(
+                              fontSize: 36,
+                              color: Color.fromRGBO(255, 211, 77, 0.2)),
+                          highlightedTextStyle: TextStyle(
+                              fontSize: 36,
+                              color: Color.fromRGBO(255, 211, 77, 1)),
+                          onTimeChange: (dateTime) => _pickDate(dateTime))),
+                  Container(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.nights_stay_outlined,
+                          color: Color.fromRGBO(255, 211, 77, 1),
+                          size: 28,
+                        ),
+                        Text('Suggested times to go to bed.',
+                            style: TextStyle(
+                                color: Color.fromRGBO(255, 211, 77, 1))),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                      flex: 2,
+                      child: PageView.builder(
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: Color.fromRGBO(255, 211, 77, 0.1),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              '${DateStringHelper.HourMinute2Digits(dates[index])}',
+                              style: TextStyle(
+                                  color: Color.fromRGBO(255, 211, 77, 1),
+                                  fontSize: 24),
+                            ),
+                          );
+                        },
+                        itemCount: 6,
+                      )),
+                  Spacer(
                     flex: 2,
-                    child: PageView.builder(
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: Color.fromRGBO(255, 211, 77, 0.1),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text('${DateStringHelper.HourMinute2Digits(dates[index])}', style: TextStyle(color: Color.fromRGBO(255, 211, 77, 1), fontSize: 24),),
-                        );
-                      },
-                      itemCount: 6,
-                    )
-                ),
-                Spacer(flex: 2,)
-              ],
-            ),
-          )
-        )
+                  )
+                ],
+              ),
+            ))
       ],
     );
   }
