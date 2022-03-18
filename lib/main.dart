@@ -56,6 +56,8 @@ class _MyHomePageState extends State<MyHomePage> {
   DateTime _defaultTime = new DateTime(DateTime.now().year,
       DateTime.now().month, DateTime.now().day, 7, 0, 0, 0, 0);
   late List<DateTime> dates = _calculateTimes();
+  PageController _pageController = PageController();
+  int currentPage = 0;
 
   void _pickDate(DateTime dateTime) {
     setState(() {
@@ -68,9 +70,18 @@ class _MyHomePageState extends State<MyHomePage> {
     List<DateTime> times = <DateTime>[];
     for (int i = 6; i > 0; i--) {
       times.add(_dateTime.subtract(new Duration(minutes: (90 * (i + 1)) + 15)));
-      //log('Adding time: ${times[(6 - i)]}');
     }
     return times;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(() {
+      setState(() {
+        currentPage = _pageController.page!.round();
+      });
+    });
   }
 
   @override
@@ -84,8 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
       children: [
         Container(color: Color.fromRGBO(10, 0, 46, 1)),
         SvgPicture.asset(
-          'assets/images/night.svg',
-          fit: BoxFit.cover,
+          'assets/images/night-less-stars.svg',
+          fit: BoxFit.fill,
           allowDrawingOutsideViewBox: true,
         ),
         Scaffold(
@@ -155,6 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Expanded(
                       flex: 2,
                       child: PageView.builder(
+                        controller: _pageController,
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
                             decoration: BoxDecoration(
@@ -171,6 +183,38 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         itemCount: 6,
                       )),
+                  Container(
+                    margin: EdgeInsets.only(top: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: dates
+                          .map((e) => Container(
+                                margin: EdgeInsets.symmetric(horizontal: 2),
+                                width: 11,
+                                height: 11,
+                                decoration: BoxDecoration(
+                                    boxShadow: (dates.indexOf(e) == currentPage)
+                                        ? [
+                                            BoxShadow(
+                                              color: Color.fromRGBO(
+                                                  255, 211, 77, 0.6),
+                                              blurRadius: 4.0,
+                                              spreadRadius: 1.0,
+                                              offset: Offset(
+                                                0.0,
+                                                0.0,
+                                              ),
+                                            )
+                                          ]
+                                        : [],
+                                    color: (dates.indexOf(e) == currentPage)
+                                        ? Color.fromRGBO(255, 211, 77, 1)
+                                        : Color.fromRGBO(255, 211, 77, 0.3),
+                                    shape: BoxShape.circle),
+                              ))
+                          .toList(),
+                    ),
+                  ),
                   Spacer(
                     flex: 2,
                   )

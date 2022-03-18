@@ -1,7 +1,5 @@
 # Project exclude paths
 /.dart_tool/
 /build/
-./android
-/android
 /.idea
 /test
